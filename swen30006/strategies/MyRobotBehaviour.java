@@ -1,32 +1,20 @@
 package strategies;
 import automail.Clock;
-import automail.PriorityMailItem;
 import automail.StorageTube;
 import exceptions.TubeFullException;
 
 public class MyRobotBehaviour implements IRobotBehaviour {
 	
-	// Why do we need a MAX_TAKE if tube has a isFull method?
 	private static final int MAX_TAKE = 4;
-	private boolean newPriority; // Used if we are notified that a priority item has arrived. 
-		
-	public MyRobotBehaviour() {
-		newPriority = false;
-	}
 
 	@Override
 	public boolean fillStorageTube(IMailPool mailPool, StorageTube tube) {
 		// Priority items are important, but other mail is also important.
 		// It is inefficient to leave with only one mail item.
-		// As such, we always take MAX_TAKE items.
+		// As such, we always take MAX_TAKE items and always deliver them all.
 		try{
-			newPriority = false;
-			// TODO what if we always just delivered all 4 items?
-			// Currently we return if we don't have a priority item and a new one comes in.
-			// TODO even then, you could get rid of this. But as it is currently I think keep it.
-			while(!tube.isEmpty()) {
-				mailPool.addToPool(tube.pop());
-			}
+			// We don't need to empty the mail tube upon returning because we
+			// always deliver all MAX_TAKE items on each mail run.
 			while (tube.getSize() < MAX_TAKE) {
 				// Try to take a priority item first.
 				if (mailPool.getPriorityPoolSize() > 0) {
@@ -48,21 +36,20 @@ public class MyRobotBehaviour implements IRobotBehaviour {
 	
 	@Override
     public void priorityArrival(int priority) {
-	    	// Record that a new one has arrived.
-	    	newPriority = true;
+	    	// Record that a new priority item has arrived.
+		// Beyond that we don't do anything special with this information.
 	    	System.out.println("T: " + Clock.Time() + " | Priority arrived");
     }
  
 	@Override
 	public boolean returnToMailRoom(StorageTube tube) {
-		// Only return if we don't have a priority item and a new one came in.
+		// Only return when the mail tube is empty.
+		// Priority items aren't so valuable that we should go back if one arrives
+		// and we're not holding one, instead always just deliver all MAX_TAKE items.
 		if (tube.getSize() > 0) {
-			Boolean priority = (tube.peek() instanceof PriorityMailItem);
-			return !priority && newPriority;
-		}
-		else {
 			return false;
 		}
+		return false;
 	}
 
 }

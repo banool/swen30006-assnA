@@ -16,40 +16,42 @@ public class MyMailPool implements IMailPool{
 	private PriorityQueue<PriorityMailItem> priorityPool;
 	
 	public MyMailPool(){
-		// Start empty
-		nonPriorityPool = new LinkedList<MailItem>();  // TODO explain / understand
+		// Both of the pools start empty.
+		// Because nonPriorityPool interfaces from Queue, this can only use
+		// Queue methods and as such will act like a Queue.
+		nonPriorityPool = new LinkedList<MailItem>();
+		// Comparator.comparing will generate a comparator by calling the
+		// getPriorityLevel method of PriorityMailItem and comparing the values.
+		// This saves us from having to create a whole Comparator class.
 		priorityComparator = Comparator.comparing(PriorityMailItem::getPriorityLevel);
-		// TODO REMOVE priorityComparator = new PriorityMailItemComparator();
 		priorityPool = new PriorityQueue<PriorityMailItem>(priorityComparator);
 	}
 	
 	public int getPriorityPoolSize(){
-		// This is easy
 		return priorityPool.size();
 	}
 
 	public int getNonPriorityPoolSize() {
-		// So is this
 		return nonPriorityPool.size();
 	}
 
 	public void addToPool(MailItem mailItem) {
 		// Check whether it has a priority or not
 		if(mailItem instanceof PriorityMailItem){
-			// Add to priority items.
-			// The PriorityQueue will keep it sorted by priority automatically.
+			// Add to priority items. The PriorityQueue will keep 
+			// it sorted by priority automatically.
 			priorityPool.add((PriorityMailItem)mailItem);
 		}
 		else{
-			// Add to nonpriority items
-			// Maybe I need to sort here as well? Bit confused now
+			// Add to nonpriority items. The queue maintains a FIFO system
+			// such that items that came in least recently will be taken first.
 			nonPriorityPool.add(mailItem);
 		}
 	}
 	
 	public MailItem getNonPriorityMail(){
 		if(getNonPriorityPoolSize() > 0){
-			// How am I supposed to know if this is the earliest?
+			// This returns the non-pri item that has been waiting longest.
 			return nonPriorityPool.poll();
 		}
 		else{
@@ -59,7 +61,7 @@ public class MyMailPool implements IMailPool{
 	
 	public MailItem getHighestPriorityMail(){
 		if(getPriorityPoolSize() > 0){
-			// How am I supposed to know if this is the highest/earliest?
+			// This returns the highest priority item.
 			return priorityPool.poll();
 		}
 		else{
@@ -69,28 +71,8 @@ public class MyMailPool implements IMailPool{
 	}
 	
 	public MailItem getBestMail(int FloorFrom, int FloorTo) {
-		// Are you kidding me!!
 		return null;
 	}
 	
-	// Never really wanted to be a programmer any way ...
-	
-}
-
-// TODO destroy this code.
-
-class PriorityMailItemComparator implements Comparator<PriorityMailItem>
-{
-	// Since we're not allowed to modify PriorityMailItem...
-	public int compare(PriorityMailItem m1, PriorityMailItem m2)
-    {
-        if (m1.getPriorityLevel() > m2.getPriorityLevel()) {
-        		return 1;
-        } else if (m1.getPriorityLevel() < m2.getPriorityLevel()) {
-        		return -1;
-        } else {
-        		return 0;
-        }
-    }
 }
 
