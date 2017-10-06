@@ -43,12 +43,9 @@ public class MyRobotBehaviour implements IRobotBehaviour {
  
 	@Override
 	public boolean returnToMailRoom(StorageTube tube) {
-		// Only return when the mail tube is empty.
-		// Priority items aren't so valuable that we should go back if one arrives
-		// and we're not holding one, instead always just deliver all MAX_TAKE items.
-		if (tube.getSize() > 0) {
-			return false;
-		}
+		// Priority items aren't so valuable that we should go back for one if
+		// one arrives and we're not holding one, instead always just deliver
+		// all MAX_TAKE items in each run.
 		return false;
 	}
 

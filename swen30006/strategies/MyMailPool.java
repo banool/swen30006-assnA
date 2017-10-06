@@ -23,6 +23,7 @@ public class MyMailPool implements IMailPool{
 		// Comparator.comparing will generate a comparator by calling the
 		// getPriorityLevel method of PriorityMailItem and comparing the values.
 		// This saves us from having to create a whole Comparator class.
+		// Fortunately it orders it the right way without having to change anything.
 		priorityComparator = Comparator.comparing(PriorityMailItem::getPriorityLevel);
 		priorityPool = new PriorityQueue<PriorityMailItem>(priorityComparator);
 	}
@@ -36,7 +37,7 @@ public class MyMailPool implements IMailPool{
 	}
 
 	public void addToPool(MailItem mailItem) {
-		// Check whether it has a priority or not
+		// Check whether them item is a priority item or not.
 		if(mailItem instanceof PriorityMailItem){
 			// Add to priority items. The PriorityQueue will keep 
 			// it sorted by priority automatically.
@@ -71,6 +72,7 @@ public class MyMailPool implements IMailPool{
 	}
 	
 	public MailItem getBestMail(int FloorFrom, int FloorTo) {
+		// No thanks! :)
 		return null;
 	}
 	
